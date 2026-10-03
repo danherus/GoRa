@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>КИСКИ ПРОТИВ КРЫСКИ</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Оверлей "поверни телефон" -->
+    <div id="rotate-overlay">
+        <div class="rotate-icon">📱</div>
+        <div class="rotate-text">
+            ПОВЕРНИ<br>ТЕЛЕФОН<br>ГОРИЗОНТАЛЬНО
+        </div>
+    </div>
+
+    <div id="app">
+        <header id="topbar">
+            <div class="neon-sign">
+                <span class="sign-cats">КИСКИ</span>
+                <span class="sign-vs">VS</span>
+                <span class="sign-rats">КРЫСКИ</span>
+            </div>
+            <div class="sign-flicker-line"></div>
+        </header>
+
+        <div id="game-wrapper">
+            <div id="mobile-controls" class="hidden">
+                <button id="control-toggle-btn" class="control-toggle-btn" title="Сменить управление">
+                    <span id="control-icon">🕹</span>
+                </button>
+
+                <div id="joystick" class="control-panel">
+                    <div id="joystick-knob"></div>
+                </div>
+
+                <div id="dpad" class="control-panel hidden">
+                    <button class="dpad-btn" data-dir="up">▲</button>
+                    <button class="dpad-btn" data-dir="left">◄</button>
+                    <button class="dpad-btn" data-dir="right">►</button>
+                    <button class="dpad-btn" data-dir="down">▼</button>
+                </div>
+            </div>
+
+            <div id="playfield">
+                <canvas id="game"></canvas>
+                <div id="level-complete-overlay" class="hidden">
+                    <div class="level-clear-text">LEVEL CLEAR!</div>
+                    <div class="level-tap-hint">TAP OR PRESS ANY KEY</div>
+                </div>
+            </div>
+
+            <div id="hud">
+                <button id="pause-btn" title="Menu">☰</button>
+
+                <div class="hud-level">
+                    <span class="level-label">LEVEL</span>
+                    <b id="level">1</b>
+                </div>
+
+                <div class="hud-group hud-top">
+                    <div class="hud-item">
+                        <span class="hud-icon">🏆</span>
+                        <b id="score">0</b>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-icon">⭐</span>
+                        <b id="best">0</b>
+                    </div>
+                </div>
+
+                <div class="hud-spacer"></div>
+
+                <div id="bonuses"></div>
+
+                <div class="hud-group hud-bottom">
+                    <div class="hud-item hud-traps">
+                        <span class="hud-icon">🪤</span>
+                        <b id="traps">0</b>
+                    </div>
+                    <div class="hud-item hud-lives">
+                        <div id="lives-hearts"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="combo" class="hidden"></div>
+
+            <button id="trap-btn" class="hidden">🪤 SET TRAP</button>
+            <button id="next-level-btn" class="hidden">NEXT LEVEL ➡️</button>
+
+            <div id="main-menu" class="overlay">
+                <h1 class="neon-logo">
+                    <span class="logo-cats">КИСКИ</span>
+                    <span class="logo-vs">VS</span>
+                    <span class="logo-rats">КРЫСКИ</span>
+                </h1>
+                <div class="menu-buttons">
+                    <button data-action="play">▶ PLAY</button>
+                    <button data-action="leaderboard" class="secondary">🏆 HIGH SCORES</button>
+                    <button data-action="controls" class="secondary" id="controls-toggle">🎮 CONTROLS: MAGNET</button>
+                    <button data-action="sound" class="secondary" id="sound-toggle">🔊 SFX: ON</button>
+                    <button data-action="music" class="secondary" id="music-toggle">🎵 MUSIC: ON</button>
+                </div>
+                <div class="menu-footer">
+                    <small>PLAYER: <span id="player-name">GUEST</span></small>
+                </div>
+            </div>
+
+            <div id="overlay" class="overlay hidden">
+                <h1 id="overlay-title">GAME OVER</h1>
+                <p id="overlay-text"></p>
+                <div class="save-score" id="save-score-block">
+                    <label>YOUR NAME:</label>
+                    <input type="text" id="nickname-input" maxlength="20" placeholder="GUEST">
+                </div>
+                <div class="menu-buttons">
+                    <button id="save-btn">💾 SAVE SCORE</button>
+                    <button id="restart-btn" class="secondary">🔄 PLAY AGAIN</button>
+                    <button id="menu-btn" class="secondary">🏠 MAIN MENU</button>
+                </div>
+            </div>
+
+            <div id="pause-overlay" class="overlay hidden">
+                <h1>☰ PAUSED</h1>
+                <div class="menu-buttons">
+                    <button id="resume-btn">▶ RESUME</button>
+                    <button id="pause-controls-btn" class="secondary">🎮 CONTROLS: MAGNET</button>
+                    <button id="pause-sound-btn" class="secondary">🔊 SFX: ON</button>
+                    <button id="pause-music-btn" class="secondary">🎵 MUSIC: ON</button>
+                    <button id="pause-leaderboard-btn" class="secondary">🏆 HIGH SCORES</button>
+                    <button id="pause-to-menu" class="secondary">🏠 MAIN MENU</button>
+                </div>
+            </div>
+
+            <div id="leaderboard" class="overlay hidden">
+                <h2>🏆 HIGH SCORES</h2>
+                <div class="lb-header">
+                    <span>#</span><span>NAME</span><span>SCORE</span><span>DATE</span>
+                </div>
+                <div id="leaderboard-list"></div>
+                <button id="close-leaderboard" class="secondary">CLOSE</button>
+            </div>
+
+            <div id="toast-container"></div>
+        </div>
+    </div>
+
+    <script src="audio.js"></script>
+    <script src="sprites.js"></script>
+    <script src="levels.js"></script>
+    <script src="leaderboard.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
